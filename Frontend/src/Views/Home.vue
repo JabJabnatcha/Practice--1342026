@@ -1,46 +1,48 @@
 <script setup lang="ts">
-import Topbar from '../components/topbar.vue'
-import SearchBar from '../components/search.vue'
-import ProductCard from '../components/ProductCard.vue'
+import TopBar from '../components/topbar.vue';
+import SearchBar from '../components/search.vue';
+import ProductCard from '../components/ProductCard.vue';
+import { useProducts } from '../composible/useProduct';
 
-// mock data (เอาไว้เทสก่อน)
-const products = [
-  {
-    id: 1,
-    productName: 'Product 1',
-    productPrice: 100,
-    image: '',
-  },
-  {
-    id: 2,
-    productName: 'Product 2',
-    productPrice: 200,
-    image: '',
-  },
-]
-
-const handleSearch = (keyword: string) => {
-  console.log('search:', keyword)
-}
+const {
+  filteredProducts,
+  loading,
+  error,
+  handleSearch,
+  fetchProducts
+} = useProducts();
 </script>
 
 <template>
-  <!-- Topbar -->
-  <Topbar />
+  <div class="min-h-screen">
+    <TopBar />
+    <main class="container mx-auto px-4 py-8">
 
-  <div class="p-6">
 
-    <!-- Search -->
-    <SearchBar @search="handleSearch" />
+      <SearchBar @search="handleSearch" />
 
-    <!-- Product Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
-      <ProductCard
-        v-for="item in products"
-        :key="item.id"
-        :product="item"
-      />
-    </div>
+      <div v-if="loading" class="flex justify-center items-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
 
+      <div v-else-if="error" class="text-center py-12">
+        <p class="text-red-600 text-lg">{{ error }}</p>
+        <button @click="fetchProducts" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Try Again
+        </button>
+      </div>
+
+      <div v-else-if="filteredProducts.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">
+        <ProductCard
+          v-for="product in filteredProducts"
+          :key="product.id"
+          :product="product"
+        />
+      </div>
+
+      <div v-else class="text-center py-12">
+        <p class="text-gray-500 text-lg">No products found.</p>
+      </div>
+    </main>
   </div>
 </template>

@@ -1,23 +1,22 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router";
 
 // import หน้า
-import Home from '../Views/Home.vue'
-import About from '../Views/Detail.vue'
+import Home from "../Views/Home.vue";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: '/',
-      name: 'Home',
+      path: "/",
+      name: "Home",
       component: Home,
     },
     {
-      path: '/about',
-      name: 'About',
-      component: About,
+      path: "/item/:id",
+      name: "Detail",
+      component: () => import("../Views/Detail.vue"),
     },
   ],
-})
+});
 
-export default router
+export default router;
